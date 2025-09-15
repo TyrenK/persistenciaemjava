@@ -36,6 +36,35 @@ public class ProdutoDao {
             e.printStackTrace();
         }
         return lista;
-    }
 
+        public void atualizar(Produto p) {
+            String sql = "UPDATE produtos SET nome=?, preco=? WHERE id=?";
+
+            try (Connection conn = Conexao.conectar();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, p.getNome());
+                stmt.setDouble(2, p.getPreco());
+                stmt.setInt(3, p.getId());
+                stmt.executeUpdate();
+                System.out.println("Produto atualizado!");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void deletar(int id) {
+            String sql = "DELETE FROM produtos WHERE id=?";
+
+            try (Connection conn = Conexao.conectar();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+                
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+                System.out.println("Produto deletado!");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
