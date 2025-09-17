@@ -1,33 +1,59 @@
-import java.sql.*;
+
+import java.util.*;
+
+import src.Produto;
+import src.ProdutoDAO;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/loja";
-        String usuario = "root";
-        String senha = "";
+    public static void main(String[] args) {
+        ProdutoDAO dao = new ProdutoDAO();
+        Scanner sc = new Scanner(System.in);
 
-        try {
-            Connection conexao = DriverManager.getConnection(url, usuario, senha);
-            System.out.println("Conexão estabelecida com sucesso!");
+        System.out.println( 
+        "1 - Inserir | 2 - Listar | 3 - Atualizar | 4 - Deletar"
+        );
+        int opcao = sc.nextInt();
 
-            String sql = "SELECT * FROM produtos";
-            Statement stmt = conexao.createStatement();
-            ResultSet resultado = stmt.executeQuery(sql);
+        switch (opcao){
+            case 1:
+                System.out.println("Nome: ");
+                String nome = sc.nextLine();
+                nome = sc.nextLine();
+                System.out.println("Preço: ");
+                double preco = sc.nextDouble();
+                Produto p = new Produto(nome, preco);
+                dao.inserir(p);
+                break;
 
-            System.out.println("Lista de Produtos:");
-            while (resultado.next()) {
-                int id = resultado.getInt("id");
-                String nome = resultado.getString("nome");
-                double preco = resultado.getDouble("preco");
-
-                System.out.println(id + " - " + nome + " - R$ " + preco);
-            }
-
-            resultado.close();
-            stmt.close();
-            conexao.close();
-        } catch (SQLException e) {
-            System.out.println("Erro ao conectar: " + e.getMessage());
+            case 2:
+                for (Produto prod : dao.listar()) {
+                    System.out.println(
+                        prod.getId() + " - " + 
+                        prod.getNome() + " -  R$" +
+                        prod.getPreco());
+                }
+                break;
+            
+            case 3:
+                System.out.println("ID do produto: ");
+                int id = sc.nextInt();
+                sc.nextLine();
+                System.out.println("Novo nome: ");
+                nome = sc.nextLine();
+                System.out.println("Novo preço: ");
+                preco = sc.nextDouble();
+                p = new Produto(nome, preco);
+                p.setId(id);
+                dao.atualizar(p);
+                break;
+            case 4:
+                System.out.println("ID do produto a deletar: ");
+                id = sc.nextInt();
+                dao.deletar(id);
+                break;  
+            default:
+                System.out.println("Opção inválida");
         }
+        sc.close();
     }
 }
